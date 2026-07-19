@@ -1,5 +1,17 @@
 # Installation and first run
 
+## Release install
+
+Download the Windows ZIP, Android APK, and `SHA256SUMS.txt` from the same GitHub
+release. Verify the downloads, extract the Windows ZIP, and open `LiftOff.exe`.
+The tray launcher installs production dependencies when needed. On first launch
+it creates a private `.env` with random local authentication secrets and shows
+the pairing password once.
+
+Exit an existing LiftOff tray process before replacing an installed release.
+Preserve its private `.env` and `certs/` directory during a manual upgrade.
+Android APKs are attached to each GitHub release.
+
 ## Requirements
 
 - Windows 10 or newer
@@ -23,6 +35,5 @@ npm.cmd start
 For tray use, build `bridge/windows/LiftOffLauncher.cs` with the provided
 `build-launcher.ps1`. Do not commit the resulting executable.
 
-The Android app can be installed from a locally built APK. This repository does
-not publish or include an APK. From `android/`, run `flutter pub get` and
-`flutter build apk --release`.
+The Android app can also be built locally. From `android/`, run
+`flutter pub get` and `flutter build apk --release`.

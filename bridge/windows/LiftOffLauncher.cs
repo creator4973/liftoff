@@ -5,6 +5,8 @@ using System.Drawing;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
@@ -132,6 +134,13 @@ internal sealed class LiftOffTrayContext : ApplicationContext
 
         AppendLog("Start requested from " + root + ".");
 
+        if (!EnsureEnvironmentFile())
+        {
+            desiredRunning = false;
+            SetStatus("configuration failed");
+            return;
+        }
+
         AppendLog("Checking whether a bridge is already listening.");
         string existingUrl = BridgeProbe.FindReadyUrl(root, false);
         if (existingUrl != null)
@@ -222,6 +231,67 @@ internal sealed class LiftOffTrayContext : ApplicationContext
             AppendLog("Bridge start failed: " + error.Message);
             ShowError("LiftOff could not start the bridge. Open the tray logs for details.");
         }
+    }
+
+    private bool EnsureEnvironmentFile()
+    {
+        string envPath = Path.Combine(root, ".env");
+        if (File.Exists(envPath)) return true;
+
+        try
+        {
+            string password = RandomHex(12);
+            string cookieSecret = RandomHex(32);
+            string authSalt = RandomHex(16);
+            string contents = string.Join(Environment.NewLine, new string[]
+            {
+                "# Generated locally by LiftOff. Do not share or commit this file.",
+                "APP_PASSWORD=" + password,
+                "PORT=4747",
+                "COOKIE_SECRET=" + cookieSecret,
+                "AUTH_SALT=" + authSalt,
+                ""
+            });
+            File.WriteAllText(envPath, contents, new UTF8Encoding(false));
+
+            bool copied = false;
+            try
+            {
+                Clipboard.SetText(password);
+                copied = true;
+            }
+            catch
+            {
+                copied = false;
+            }
+
+            AppendLog("Created a private .env file with random local secrets.");
+            MessageBox.Show(
+                "LiftOff created your local pairing password:\n\n" + password +
+                (copied ? "\n\nThe password was copied to the clipboard." : "") +
+                "\n\nSave it in your password manager. It is also stored in the private .env file beside LiftOff.exe.",
+                "LiftOff first setup",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information
+            );
+            return true;
+        }
+        catch (Exception error)
+        {
+            AppendLog("Could not create the private .env file: " + error.Message);
+            ShowError("LiftOff could not create its private configuration file. Check folder permissions and try again.");
+            return false;
+        }
+    }
+
+    private static string RandomHex(int byteCount)
+    {
+        byte[] bytes = new byte[byteCount];
+        using (RandomNumberGenerator generator = RandomNumberGenerator.Create())
+        {
+            generator.GetBytes(bytes);
+        }
+        return BitConverter.ToString(bytes).Replace("-", "").ToLowerInvariant();
     }
 
     private int RunDependencyInstall()

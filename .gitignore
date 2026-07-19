@@ -35,6 +35,8 @@ bridge/screenshots/
 **/attachments/
 **/uploads/
 **/screenshots/
+!docs/assets/screenshots/
+!docs/assets/screenshots/**
 
 # Generated release outputs and binaries
 bridge/public/*.apk

@@ -1,0 +1,113 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  android:
+    name: Android APK
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: android
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - run: flutter analyze
+      - run: flutter test
+      - run: flutter build apk --release
+      - name: Name release APK
+        shell: bash
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          mkdir -p ../dist
+          cp build/app/outputs/flutter-apk/app-release.apk "../dist/liftoff-android-v${version}.apk"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android-release
+          path: dist/liftoff-android-*.apk
+          if-no-files-found: error
+
+  windows:
+    name: Windows bridge
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: bridge
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: bridge/package-lock.json
+      - run: npm ci
+      - run: npm run test:unit
+      - run: npm test
+      - run: npm run build:launcher:win
+      - name: Package Windows bridge
+        shell: powershell
+        run: |
+          $version = $env:GITHUB_REF_NAME.TrimStart('v')
+          $stageName = "liftoff-windows-v$version"
+          $stage = Join-Path $env:RUNNER_TEMP $stageName
+          New-Item -ItemType Directory -Path $stage -Force | Out-Null
+
+          $runtimeItems = @(
+            'src',
+            'public',
+            'scripts',
+            'windows',
+            'launcher.js',
+            'package.json',
+            'package-lock.json',
+            '.env.example',
+            'README.md',
+            'LiftOff.exe'
+          )
+          foreach ($item in $runtimeItems) {
+            Copy-Item -LiteralPath $item -Destination $stage -Recurse -Force
+          }
+          Copy-Item -LiteralPath '..\LICENSE' -Destination (Join-Path $stage 'LICENSE')
+          Copy-Item -LiteralPath '..\NOTICE.md' -Destination (Join-Path $stage 'NOTICE.md')
+
+          $dist = Join-Path $env:GITHUB_WORKSPACE 'dist'
+          New-Item -ItemType Directory -Path $dist -Force | Out-Null
+          Compress-Archive -LiteralPath $stage -DestinationPath (Join-Path $dist "$stageName.zip") -CompressionLevel Optimal
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-release
+          path: dist/liftoff-windows-*.zip
+          if-no-files-found: error
+
+  publish:
+    name: Publish GitHub release
+    needs: [android, windows]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+      - name: Create checksums
+        run: |
+          cd dist
+          sha256sum liftoff-* > SHA256SUMS.txt
+      - name: Publish pre-release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" dist/* \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "LiftOff $GITHUB_REF_NAME" \
+            --generate-notes \
+            --prerelease
