@@ -1,0 +1,84 @@
+{
+    "name": "liftoff-antigravity-bridge",
+    "version": "0.8.1",
+    "type": "module",
+    "description": "Windows bridge for the LiftOff Android companion and Antigravity AI sessions",
+    "keywords": [
+        "antigravity",
+        "windsurf",
+        "mobile",
+        "remote",
+        "chat",
+        "ai",
+        "cdp",
+        "chrome-devtools-protocol",
+        "ide",
+        "vscode"
+    ],
+    "homepage": "https://github.com/creator4973/liftoff",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/creator4973/liftoff.git"
+    },
+    "bugs": {
+        "url": "https://github.com/creator4973/liftoff/issues"
+    },
+    "bin": {
+        "liftoff": "./src/server.js"
+    },
+    "files": [
+        "src/",
+        "public/download.html",
+        "public/mobile-app.json",
+        "public/css/download.css",
+        "public/js/download.js",
+        "public/icons/liftoff-icon.png",
+        "scripts/*.js",
+        "windows/",
+        "launcher.js",
+        "test/",
+        ".env.example",
+        "README.md",
+        "NOTICE.md",
+        "LICENSE"
+    ],
+    "scripts": {
+        "start": "node src/server.js",
+        "dev": "node src/server.js",
+        "start:local": "node launcher.js --mode local",
+        "start:web": "node launcher.js --mode web",
+        "start:web:pinggy": "node launcher.js --mode web --provider pinggy",
+        "build:launcher:win": "powershell -NoProfile -ExecutionPolicy Bypass -File windows/build-launcher.ps1",
+        "probe:language-server": "node scripts/probe-language-server.js",
+        "probe:language-server-schema": "node scripts/probe-language-server-schema.js",
+        "setup:ssl": "node scripts/setup-ssl.js",
+        "test": "node test/test.js",
+        "test:unit": "vitest run",
+        "test:unit:watch": "vitest",
+        "test:coverage": "vitest run --coverage",
+        "test:all": "npm test && npm run test:unit"
+    },
+    "dependencies": {
+        "compression": "^1.8.1",
+        "cookie-parser": "^1.4.7",
+        "dotenv": "^17.3.1",
+        "express": "^4.22.1",
+        "qrcode": "^1.5.4",
+        "qrcode-terminal": "^0.12.0",
+        "ws": "^8.18.0"
+    },
+    "author": "LiftOff contributors",
+    "contributors": [
+        "creator4973 (https://github.com/creator4973)",
+        "Diego Souza (https://github.com/diegosouzapw)",
+        "Krishna Kanth B (https://github.com/krishnakanthb13)"
+    ],
+    "license": "GPL-3.0-only",
+    "engines": {
+        "node": ">=22.0.0"
+    },
+    "devDependencies": {
+        "@vitest/coverage-v8": "^4.1.2",
+        "vitest": "^4.1.2"
+    }
+}

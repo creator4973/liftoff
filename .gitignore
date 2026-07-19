@@ -1,0 +1,65 @@
+# Dependencies and package-manager state
+node_modules/
+npm-debug.log*
+bridge/npm-debug.log*
+android/.dart_tool/
+android/.packages
+android/.flutter-plugins
+android/.flutter-plugins-dependencies
+android/**/.gradle/
+android/**/build/
+android/**/local.properties
+android/**/.idea/
+android/**/*.iml
+
+# Secrets, credentials, certificates, and signing material
+.env
+*.env
+!.env.example
+bridge/certs/
+**/*.key
+**/*.pem
+**/*.p12
+**/*.pfx
+**/*.jks
+**/*.keystore
+android/android/key.properties
+
+# Runtime state and private data
+bridge/data/
+bridge/logs/
+bridge/uploads/
+bridge/screenshots/
+.codex-remote-attachments/
+.tmp/
+**/attachments/
+**/uploads/
+**/screenshots/
+
+# Generated release outputs and binaries
+bridge/public/*.apk
+bridge/public/*.exe
+bridge/outputs/
+*.apk
+*.aab
+*.exe
+*.dll
+*.dmg
+*.zip
+
+# IDE and OS files
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Coverage and local reports
+coverage/
+.nyc_output/
+test-results/
+reports/
+
+# Local codebase knowledge-graph cache
+.codebase-memory/

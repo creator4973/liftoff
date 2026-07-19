@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f3f1e8">
+    <meta name="description" content="Install the LiftOff Android companion from your private local bridge.">
+    <title>LiftOff Setup</title>
+    <link rel="icon" href="/setup-assets/liftoff-icon.png" type="image/png">
+    <link rel="stylesheet" href="/setup-assets/download.css">
+</head>
+<body>
+    <main class="page-shell">
+        <nav class="topbar" aria-label="Bridge status">
+            <a class="brand" href="/" aria-label="LiftOff setup home">
+                <img src="/setup-assets/liftoff-icon.png" alt="" width="38" height="38">
+                <span>LiftOff</span>
+            </a>
+            <div class="online-pill" id="bridge-pill"><span aria-hidden="true"></span><b id="bridge-pill-label">Bridge online</b></div>
+        </nav>
+
+        <section class="hero" aria-labelledby="page-title">
+            <div class="hero-copy">
+                <p class="eyebrow">Private Antigravity companion</p>
+                <h1 id="page-title">Your desk agent,<br><em>within reach.</em></h1>
+                <p class="intro">Install LiftOff from the computer running the bridge. Your chats stay between your own devices and Antigravity.</p>
+
+                <div class="actions">
+                    <a class="download-button" id="download-button" href="/liftoff.apk" download>
+                        <span class="button-icon" aria-hidden="true">&#8595;</span>
+                        <span><strong>Download LiftOff for Android</strong><small id="button-version">Latest release</small></span>
+                    </a>
+                    <span class="release-state"><i aria-hidden="true"></i><span id="version">Checking release...</span></span>
+                </div>
+
+                <ol class="setup-steps" aria-label="Setup steps">
+                    <li><span>01</span><p><strong>Keep LiftOff running</strong>The Windows bridge hosts the private phone API.</p></li>
+                    <li><span>02</span><p><strong>Scan or download</strong>Install the APK on your Android phone.</p></li>
+                    <li><span>03</span><p><strong>Open and pair</strong>Use LAN discovery, the pairing QR, or your Tailscale address.</p></li>
+                </ol>
+            </div>
+
+            <aside class="download-panel" aria-labelledby="scan-title">
+                <div class="panel-heading">
+                    <p>Install from phone</p>
+                    <span>Android</span>
+                </div>
+                <div class="qr-frame">
+                    <img src="/download-qr.svg" alt="QR code linking directly to the newest LiftOff APK" width="360" height="360">
+                    <div class="scan-mark" aria-hidden="true"></div>
+                </div>
+                <h2 id="scan-title">Scan to download</h2>
+                <p>Point your phone camera at the code. It opens the newest LiftOff APK served by this computer.</p>
+
+                <dl class="release-details">
+                    <div><dt>Size</dt><dd id="file-size">Loading...</dd></div>
+                    <div><dt>Published</dt><dd id="published-at">Loading...</dd></div>
+                    <div class="checksum"><dt>SHA-256</dt><dd id="checksum">Loading...</dd></div>
+                </dl>
+            </aside>
+        </section>
+
+        <section class="bridge-console" aria-labelledby="bridge-console-title">
+            <div class="console-intro">
+                <p class="eyebrow">Windows bridge</p>
+                <h2 id="bridge-console-title">Manage the launch pad.</h2>
+                <p>Check the local bridge, review recent activity, and control the tray app without opening a terminal.</p>
+            </div>
+
+            <div class="console-panel">
+                <div class="status-grid" aria-live="polite">
+                    <div><span>Bridge</span><strong id="desktop-running">Checking</strong></div>
+                    <div><span>Tray control</span><strong id="desktop-managed">Checking</strong></div>
+                    <div><span>Version</span><strong id="desktop-version">-</strong></div>
+                    <div><span>Uptime</span><strong id="desktop-uptime">-</strong></div>
+                </div>
+
+                <form class="unlock-row" id="desktop-unlock-form">
+                    <label for="desktop-password">Bridge password</label>
+                    <div>
+                        <input id="desktop-password" name="password" type="password" autocomplete="current-password" placeholder="Enter password">
+                        <button type="submit" id="desktop-unlock">Unlock controls</button>
+                    </div>
+                    <p id="desktop-feedback" role="status">Machine controls stay locked, including on your local network.</p>
+                </form>
+
+                <div class="desktop-controls" id="desktop-controls" hidden>
+                    <div class="control-actions">
+                        <button type="button" id="desktop-restart">Restart bridge</button>
+                        <button type="button" class="danger-button" id="desktop-stop">Stop bridge</button>
+                        <label class="toggle-row">
+                            <input type="checkbox" id="desktop-autostart">
+                            <span>Start LiftOff with Windows</span>
+                        </label>
+                        <button type="button" class="quiet-button" id="desktop-refresh-logs">Refresh logs</button>
+                    </div>
+                    <pre class="bridge-logs" id="desktop-logs" tabindex="0">Recent bridge logs will appear here.</pre>
+                    <p class="offline-note">After choosing Stop, this page goes offline. Start the bridge again from the LiftOff icon in the Windows notification area.</p>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <p>Chat controls live in the LiftOff Android app. This page manages installation and the Windows bridge.</p>
+            <p class="local-note">Private bridge &middot; LAN and Tailscale ready</p>
+        </footer>
+    </main>
+    <script src="/setup-assets/download.js" defer></script>
+</body>
+</html>
